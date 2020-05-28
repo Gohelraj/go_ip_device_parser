@@ -1,4 +1,4 @@
-module zuru.tech/go_ip_device_parser
+module github.com/Gohelraj/go_ip_device_parser
 
 go 1.14
 
