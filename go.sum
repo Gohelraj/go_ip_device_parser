@@ -1,2 +1,2 @@
-github.com/mssola/user_agent v0.5.2 h1:CZkTUahjL1+OcZ5zv3kZr8QiJ8jy2H08vZIEkBeRbxo=
-github.com/mssola/user_agent v0.5.2/go.mod h1:TTPno8LPY3wAIEKRpAtkdMT0f8SE24pLRGPahjCH4uw=
+github.com/mileusna/useragent v0.0.0-20200130135054-eb80d80699e8 h1:9llJ2FwJA1bnf2d/VWxClO6Zn3groOgUiHiPPtS1zI4=
+github.com/mileusna/useragent v0.0.0-20200130135054-eb80d80699e8/go.mod h1:JWhYAp2EXqUtsxTKdeGlY8Wp44M7VxThC9FEoNGi2IE=

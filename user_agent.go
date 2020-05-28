@@ -1,94 +1,55 @@
 package go_ip_device_parser
 
 import (
-	"errors"
-	"net"
 	"net/http"
-	"strings"
 
-	"github.com/mssola/user_agent"
+	ua "github.com/mileusna/useragent"
 )
 
-type UserAgent struct {
-	user_agent.UserAgent
-	IpAddress string `json:"ipAddress"`
-}
-
-func ParseUserAgent(r *http.Request) *UserAgent {
-	var userAgent = UserAgent{}
-	ua := user_agent.New(r.UserAgent())
-	userAgent.UserAgent = *ua
-
-	ipAddress, _ := getIP(r)
-	userAgent.IpAddress = ipAddress
-
-	return &userAgent
-}
-
-func getIP(r *http.Request) (string, error) {
-	var ipAddress string
-	var netIP net.IP
-
-	if r.Header != nil {
-		ipAddress = r.Header.Get("x-client-ip")
-		netIP = net.ParseIP(ipAddress)
-		if netIP != nil {
-			return ipAddress, nil
+type UserAgentAndIPDetails struct {
+	IP    string
+	Agent struct {
+		Browser struct {
+			Name    string
+			Version string
+		}
+		Device struct {
+			Name string
+		}
+		Os struct {
+			Name    string
+			Version string
 		}
 	}
+	IsMobile  bool
+	IsTablet  bool
+	IsDesktop bool
+	IsBot     bool
+}
 
-	// Get IP from the X-REAL-IP header
-	ipAddress = r.Header.Get("cf-connecting-ip")
-	netIP = net.ParseIP(ipAddress)
-	if netIP != nil {
-		return ipAddress, nil
-	}
+// Generates device information including browser, device, os
+func ParseUserAgentAndClientIP(r *http.Request) UserAgentAndIPDetails {
+	var userAgent = UserAgentAndIPDetails{}
 
-	// Get IP from the X-REAL-IP header
-	ipAddress = r.Header.Get("true-client-ip")
-	netIP = net.ParseIP(ipAddress)
-	if netIP != nil {
-		return ipAddress, nil
-	}
+	// parse user agent string and return struct with filled details
+	client := ua.Parse(r.UserAgent())
 
-	// Get IP from the X-REAL-IP header
-	ipAddress = r.Header.Get("x-real-ip")
-	netIP = net.ParseIP(ipAddress)
-	if netIP != nil {
-		return ipAddress, nil
-	}
+	// set struct values of agent in "UserAgentAndIPDetails" struct
+	userAgent.Agent.Browser.Name = client.Name
+	userAgent.Agent.Browser.Version = client.Version
+	userAgent.Agent.Device.Name = client.Device
+	userAgent.Agent.Os.Name = client.OS
+	userAgent.Agent.Os.Version = client.OSVersion
+	userAgent.IsMobile = client.Mobile
+	userAgent.IsTablet = client.Tablet
+	userAgent.IsDesktop = client.Desktop
+	userAgent.IsBot = client.Bot
 
-	// Get IP from the X-REAL-IP header
-	ipAddress = r.Header.Get("x-forwarded")
-	netIP = net.ParseIP(ipAddress)
-	if netIP != nil {
-		return ipAddress, nil
-	}
+	// get IP address from request
+	ipAddress, _ := getIPAddress(r)
 
-	ipAddress = r.Header.Get("forwarded-for")
-	netIP = net.ParseIP(ipAddress)
-	if netIP != nil {
-		return ipAddress, nil
-	}
+	// set IP address in "UserAgentAndIPDetails" struct
+	userAgent.IP = ipAddress
 
-	// Get IP from X-FORWARDED-FOR header
-	ips := r.Header.Get("x-forwarded-for")
-	splitIps := strings.Split(ips, ",")
-	for _, ip := range splitIps {
-		netIP = net.ParseIP(ip)
-		if netIP != nil {
-			return ip, nil
-		}
-	}
-
-	// Get IP from RemoteAddr
-	ip, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return "", err
-	}
-	netIP = net.ParseIP(ip)
-	if netIP != nil {
-		return ip, nil
-	}
-	return "", errors.New("no valid ip found")
+	return userAgent
 }
