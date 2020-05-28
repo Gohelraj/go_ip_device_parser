@@ -1,4 +1,0 @@
-package: zuru.tech/go_ip_device_parser
-import:
-- package: github.com/mssola/user_agent
-  version: v0.5.2
