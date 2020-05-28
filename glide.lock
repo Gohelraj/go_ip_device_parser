@@ -1,0 +1,6 @@
+hash: e2a1a6cfd57d3c493e2a6de01ff9f53c5dbca4934be1b853f77e77f90c6f4459
+updated: 2020-05-28T10:56:48.3256328+05:30
+imports:
+- name: github.com/mssola/user_agent
+  version: 8ecdab51551156ee8777dd55d43ed3a758209ead
+testImports: []
