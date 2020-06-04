@@ -46,7 +46,7 @@ func ParseUserAgentAndClientIP(r *http.Request) UserAgentAndIPDetails {
 	userAgent.IsBot = client.Bot
 
 	// get IP address from request
-	ipAddress, _ := getIPAddress(r)
+	ipAddress := getClientIPAddress(r)
 
 	// set IP address in "UserAgentAndIPDetails" struct
 	userAgent.IP = ipAddress
